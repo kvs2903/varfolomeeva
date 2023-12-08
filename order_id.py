@@ -3,19 +3,23 @@ import requests
 import data
 
 # создание нового заказа
-def post_new_order (body):
+def post_new_order():
     return requests.post(configuration.URL_SERVICE + configuration.CREATE_ORDER_PATH,
-                         json=body)
-response = post_new_order (data.order_body)
+                         json=data.order_body)
 
 
-# сохраняем трек заказа в переменную
-order_track = response.json()
-headers_track = str(response.json()['track'])
+# сохраняем трек заказа
+def get_order_track():
+    order_track = post_new_order().json()['track']
+    return order_track
 
 
+# получаем информацию о заказе
 def get_order_id():
-    return requests.get(configuration.URL_SERVICE + configuration.ORDER_ID_PATH + headers_track)
-response = get_order_id()
-print(response.status_code)
-print(response.json())
+    track = {"t":get_order_track()}
+    response = requests.get(configuration.URL_SERVICE + configuration.ORDER_ID_PATH, params=track)
+    return response
+
+
+
+
